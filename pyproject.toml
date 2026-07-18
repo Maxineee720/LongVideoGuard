@@ -29,7 +29,8 @@ dev = [
 ]
 vlm = [
   "torch>=2.4",
-  "transformers>=4.57",
+  "torchvision>=0.19",
+  "transformers>=4.57.0",
   "accelerate>=1.0",
   "qwen-vl-utils>=0.0.14",
 ]
