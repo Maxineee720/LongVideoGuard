@@ -55,6 +55,9 @@ class Qwen3VLRunner:
         self.model_name = model_name
         self.dtype = dtype
         self.processor = AutoProcessor.from_pretrained(model_name)
+        # Use a fixed frame budget instead of the processor's default FPS sampling.
+        self.processor.video_processor.fps = None
+
         self.model = AutoModelForImageTextToText.from_pretrained(
             model_name,
             **model_kwargs,
@@ -84,7 +87,7 @@ class Qwen3VLRunner:
                 "content": [
                     {
                         "type": "video",
-                        "video": path.as_uri(),
+                        "url": str(path),
                     },
                     {
                         "type": "text",
@@ -99,11 +102,20 @@ class Qwen3VLRunner:
             tokenize=True,
             add_generation_prompt=True,
             return_dict=True,
-            return_tensors="pt",
-            num_frames=num_frames,
-            fps=None,
+            processor_kwargs={
+                "text_kwargs": {
+                    "return_tensors": "pt",
+                },
+                "videos_kwargs": {
+                    "do_sample_frames": True,
+                    "num_frames": num_frames,
+                },
+            },
         )
+
+        inputs.pop("token_type_ids", None)
         inputs = inputs.to(self.model.device)
+        
 
         torch = self._torch
         using_cuda = torch.cuda.is_available()
