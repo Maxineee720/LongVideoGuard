@@ -94,6 +94,19 @@ Run tests:
 pytest
 ```
 
+
+Prepare the first NExT-QA pilot:
+
+```bash
+python scripts/download_nextqa_annotations.py
+
+longvideoguard nextqa-stats   data/raw/nextqa/annotations/val.csv
+
+longvideoguard nextqa-build-pilot   data/raw/nextqa/annotations/val.csv   data/processed/nextqa/pilot_val.jsonl   --num-videos 12   --max-questions-per-video 4   --seed 42   --video-id-map data/raw/nextqa/annotations/map_vid_vidorID.json
+```
+
+See `docs/NEXTQA_SETUP.md` for raw-video setup and pilot rules.
+
 ## Reproducibility rules
 
 - Never report a metric without saving the raw prediction file.
@@ -108,7 +121,8 @@ pytest
 - [x] GitHub-ready repository scaffold
 - [x] Video metadata probing
 - [x] Uniform frame-index sampling
-- [ ] Dataset adapters for NExT-QA and Charades-STA
+- [x] NExT-QA annotation adapter and video-level pilot builder
+- [ ] Charades-STA dataset adapter
 - [ ] Qwen3-VL zero-shot baseline
 - [ ] Structured prediction schema and parser
 - [ ] Frozen pilot test set

@@ -1,0 +1,6 @@
+video,frame_count,width,height,question,answer,qid,type,a0,a1,a2,a3,a4
+video_001,100,640,480,why did the person sit down,2,1,CW,to sleep,to eat,to rest,to run,to sing
+video_001,100,640,480,what happened after the person stood up,1,2,TN,they slept,they walked,they ate,they waved,they fell
+video_002,80,320,240,where is the scene filmed,0,1,DL,in a kitchen,in a park,in a car,in a shop,in a school
+video_003,120,640,360,how did the person open the box,3,1,CH,with a foot,with a key,with a tool,with both hands,with a rope
+video_003,120,640,360,what happened before the person left,4,2,TP,they slept,they cooked,they ran,they jumped,they closed the door

@@ -52,3 +52,6 @@ mlruns/
 
 # Notebooks
 .ipynb_checkpoints/
+
+# Python packaging
+*.egg-info/
