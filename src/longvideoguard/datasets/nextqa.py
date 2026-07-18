@@ -5,7 +5,7 @@ import json
 import random
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Iterable, Mapping, Sequence
 
 REQUIRED_COLUMNS = {
@@ -326,9 +326,18 @@ def write_nextqa_manifest(
     with destination.open("w", encoding="utf-8") as handle:
         for record in records:
             mapped_id = mapping.get(record.video_id, record.video_id)
+
+            mapped_path = PurePosixPath(str(mapped_id))
+            mapped_name = mapped_path.name
+
+            if mapped_path.suffix:
+                video_filename = mapped_name
+            else:
+                video_filename = f"{mapped_name}{extension}"
+
             row = record.to_manifest_row(
                 split=split,
-                video_relpath=f"{mapped_id}{extension}",
+                video_relpath=video_filename,
             )
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
             count += 1

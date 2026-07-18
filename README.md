@@ -123,6 +123,7 @@ See `docs/NEXTQA_SETUP.md` for raw-video setup and pilot rules.
 - [x] Uniform frame-index sampling
 - [x] NExT-QA annotation adapter and video-level pilot builder
 - [ ] Charades-STA dataset adapter
+- [x] Pilot ZIP extraction and video validation utilities
 - [ ] Qwen3-VL zero-shot baseline
 - [ ] Structured prediction schema and parser
 - [ ] Frozen pilot test set

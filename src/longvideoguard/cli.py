@@ -17,6 +17,10 @@ from longvideoguard.datasets.nextqa import (
 )
 from longvideoguard.sampling import indices_to_timestamps, uniform_sample_indices
 from longvideoguard.video import probe_video
+from longvideoguard.video_validation import (
+    validate_manifest_videos,
+    write_video_validation_report,
+)
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
@@ -108,6 +112,23 @@ def nextqa_build_pilot(
     console.print(f"[green]Pilot manifest:[/green] {manifest_path}")
     console.print(f"[green]Pilot statistics:[/green] {stats_path}")
     console.print_json(json.dumps(stats))
+
+
+@app.command("validate-videos")
+def validate_videos(
+    manifest: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    video_root: Annotated[Path, typer.Argument(file_okay=False)],
+    output: Annotated[Path, typer.Option()] = Path(
+        "data/processed/nextqa/pilot_video_validation.json"
+    ),
+) -> None:
+    """Validate that unique manifest videos exist and can be decoded."""
+    results, summary = validate_manifest_videos(manifest, video_root)
+    destination = write_video_validation_report(results, summary, output)
+    console.print_json(json.dumps(summary))
+    console.print(f"[green]Validation report:[/green] {destination}")
+    if not summary["all_videos_ready"]:
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
