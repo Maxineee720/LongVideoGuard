@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Data and generated artefacts
+data/raw/
+data/processed/
+data/cache/
+outputs/
+checkpoints/
+runs/
+wandb/
+mlruns/
+
+# Model weights
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.gguf
+
+# Videos / large media
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Notebooks
+.ipynb_checkpoints/

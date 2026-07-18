@@ -1,0 +1,23 @@
+experiment:
+  id: qwen3vl_2b_zero_shot_uniform_16
+  seed: 42
+
+model:
+  name: Qwen/Qwen3-VL-2B-Instruct
+  revision: null
+  dtype: bfloat16
+  quantization: null
+
+video:
+  sampling_strategy: uniform
+  num_frames: 16
+  max_duration_seconds: null
+
+generation:
+  max_new_tokens: 256
+  do_sample: false
+  temperature: null
+
+output:
+  prediction_dir: outputs/predictions
+  log_dir: outputs/logs
