@@ -63,3 +63,48 @@ def test_load_sft_jsonl_row(tmp_path: Path) -> None:
     row = load_sft_jsonl_row(path, index=1)
     assert row["sample_id"] == "v2:1"
     assert row["assistant_target"] == "C"
+
+
+def test_validate_sft_row_accepts_structured_answerability_targets() -> None:
+    validate_sft_row(
+        {
+            "schema_version": "2.0",
+            "task": "videoqa_answerability",
+            "sample_id": "pos::v1:1",
+            "video_id": "v1",
+            "video_relpath": "v1.mp4",
+            "prompt": "Question",
+            "gold_status": "answerable",
+            "assistant_target": '{"status":"answerable","answer":"D"}',
+        }
+    )
+    validate_sft_row(
+        {
+            "schema_version": "2.0",
+            "task": "videoqa_answerability",
+            "sample_id": "neg::v1:1::video::v2",
+            "video_id": "v2",
+            "video_relpath": "v2.mp4",
+            "prompt": "Question",
+            "gold_status": "unanswerable",
+            "assistant_target": '{"status":"unanswerable","answer":null}',
+        }
+    )
+
+
+def test_validate_sft_row_rejects_malformed_structured_target() -> None:
+    with pytest.raises(ValueError, match="answer=null"):
+        validate_sft_row(
+            {
+                "schema_version": "2.0",
+                "task": "videoqa_answerability",
+                "sample_id": "neg::v1:1::video::v2",
+                "video_id": "v2",
+                "video_relpath": "v2.mp4",
+                "prompt": "Question",
+                "gold_status": "unanswerable",
+                "assistant_target": (
+                    '{"status":"unanswerable","answer":"D"}'
+                ),
+            }
+        )

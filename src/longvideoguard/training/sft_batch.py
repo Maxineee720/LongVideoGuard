@@ -68,9 +68,65 @@ def validate_sft_row(row: Mapping[str, object]) -> None:
             raise ValueError(f"SFT row field {field!r} must be non-empty.")
 
     target = str(row["assistant_target"]).strip()
-    if target not in {"A", "B", "C", "D", "E"}:
+
+    # Stage 1-6A ordinary NExT-QA rows supervise a single A-E answer letter.
+    # Stage 6B answerability rows supervise an exact compact JSON object:
+    # {"status":"answerable","answer":"D"} or
+    # {"status":"unanswerable","answer":null}.
+    is_answerability_task = (
+        str(row.get("task", "")).strip() == "videoqa_answerability"
+        or str(row.get("schema_version", "")).strip() == "2.0"
+        or row.get("gold_status") in {"answerable", "unanswerable"}
+    )
+
+    if not is_answerability_task:
+        if target not in {"A", "B", "C", "D", "E"}:
+            raise ValueError(
+                f"assistant_target must be one of A-E, got {target!r}."
+            )
+        return
+
+    try:
+        payload = json.loads(target)
+    except json.JSONDecodeError as exc:
         raise ValueError(
-            f"assistant_target must be one of A-E, got {target!r}."
+            "Stage 6B assistant_target must be valid compact JSON, "
+            f"got {target!r}."
+        ) from exc
+
+    if not isinstance(payload, dict) or set(payload) != {"status", "answer"}:
+        raise ValueError(
+            "Stage 6B assistant_target must contain exactly the keys "
+            "'status' and 'answer'."
+        )
+
+    status = payload["status"]
+    answer = payload["answer"]
+    if status == "answerable":
+        if answer not in {"A", "B", "C", "D", "E"}:
+            raise ValueError(
+                "An answerable Stage 6B target requires answer A-E."
+            )
+    elif status == "unanswerable":
+        if answer is not None:
+            raise ValueError(
+                "An unanswerable Stage 6B target requires answer=null."
+            )
+    else:
+        raise ValueError(
+            "Stage 6B target status must be 'answerable' or "
+            f"'unanswerable', got {status!r}."
+        )
+
+    canonical = json.dumps(
+        payload,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    if target != canonical:
+        raise ValueError(
+            "Stage 6B assistant_target must use the exact compact canonical "
+            f"JSON form {canonical!r}, got {target!r}."
         )
 
 
