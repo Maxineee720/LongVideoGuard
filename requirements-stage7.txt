@@ -1,0 +1,5 @@
+opencv-python-headless>=4.10
+pillow>=10
+numpy>=1.26
+transformers>=4.57
+torch>=2.4
